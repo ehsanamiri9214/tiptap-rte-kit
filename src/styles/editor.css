@@ -1,0 +1,160 @@
+/*
+ * Import this once anywhere in your app (e.g. the root layout):
+ *   import "tiptap-rte-kit/styles.css";
+ *
+ * Scoped entirely under `.tiptap` (the class Tiptap's own core always
+ * stamps on the editor root, editable or read-only) so it only ever
+ * touches this editor's own content, never the rest of your app.
+ *
+ * Uses @heroui/react's theme tokens (--background-secondary,
+ * --background-tertiary, --foreground, --muted) so code blocks,
+ * blockquotes, etc. automatically follow your app's light/dark theme —
+ * requires @heroui/styles to be imported somewhere in your app too
+ * (it's a peer dependency of this package for exactly that reason).
+ */
+
+/* Basic editor styles */
+.tiptap:first-child {
+  margin-top: 0;
+}
+
+.tiptap > * + * {
+  margin-top: 1rem;
+}
+
+/* List styles */
+.tiptap ul,
+.tiptap ol {
+  padding: 0 1rem;
+  margin: 1.25rem 1rem 1.25rem 0.4rem;
+}
+
+.tiptap ul li p,
+.tiptap ol li p {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+
+.tiptap ul li::marker,
+.tiptap ol li::marker {
+  color: var(--muted);
+}
+
+/* Heading styles */
+.tiptap h1,
+.tiptap h2,
+.tiptap h3,
+.tiptap h4,
+.tiptap h5,
+.tiptap h6 {
+  line-height: 1.2;
+  font-weight: 700;
+  margin-top: 2.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.tiptap h1 {
+  font-size: 1.75rem;
+}
+
+.tiptap h2 {
+  font-size: 1.5rem;
+}
+
+.tiptap h3 {
+  font-size: 1.3rem;
+}
+
+.tiptap h4 {
+  font-size: 1.15rem;
+}
+
+.tiptap h5 {
+  font-size: 1.05rem;
+}
+
+.tiptap h6 {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+
+.tiptap code {
+  background-color: var(--background-secondary);
+  color: var(--foreground);
+  border-radius: 0.35rem;
+  font-size: 0.85em;
+  padding: 0.2em 0.4em;
+}
+
+.tiptap pre {
+  background: var(--background-tertiary);
+  color: var(--foreground);
+  border-radius: 0.5rem;
+  font-family: var(--font-mono, ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace);
+  margin: 1.5rem 0;
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+}
+
+.tiptap pre code {
+  background: none;
+  color: inherit;
+  font-size: 0.85em;
+  padding: 0;
+}
+
+.tiptap blockquote {
+  border-left: 3px solid var(--muted);
+  color: var(--muted);
+  font-style: italic;
+  margin: 1.5rem 0;
+  padding-left: 1rem;
+}
+
+/*
+ * tiptap-extension-resize-image's align-left/center/right icons only
+ * ever set the image's wrapping <div> `margin` (e.g. `margin: 0 auto` to
+ * center) — they never also give it an explicit `width`. That's
+ * invisible while *editing*: the library renders that div as a flex
+ * item inside its own internal wrapper there, and a width-less flex
+ * item shrinks to fit its content by default, leaving room for the
+ * margin to actually shift it. But whenever that same div is rendered
+ * as a plain block (which is exactly what the library itself does in
+ * *read-only* mode — it deliberately skips its own flex wrapper when
+ * `editable: false`), an unset width computes to 100%, and the
+ * identical margin has nothing to do — alignment silently reverts the
+ * moment the content is saved and reloaded.
+ *
+ * `display: table` makes the div shrink-wrap to its image's intrinsic
+ * size regardless of the parent's display type — the classic non-flex
+ * way to get shrink-to-fit sizing around a responsive image. Plain
+ * `width: fit-content` looks equivalent but is circular against most
+ * apps' global `img { max-width: 100% }` reset (the div's size would
+ * depend on the img's preferred size, whose own max-width is a
+ * percentage of that same div) and collapses everything to 0 — table's
+ * auto-layout algorithm resolves percentage descendants against the
+ * table's *own* containing block instead, sidestepping that entirely,
+ * while still correctly capping at `max-width: 100%` so an unresized
+ * image naturally wider than the content column doesn't overflow it. A
+ * `width` set explicitly on the element (e.g. after the user drags a
+ * resize handle) is inline and always wins over this stylesheet default
+ * regardless.
+ */
+.tiptap div:has(> img) {
+  display: table;
+  max-width: 100%;
+}
+
+/*
+ * Rounded corners go on the <img> itself, not `overflow: hidden` on its
+ * container above — that container gets resize-handle dots and the
+ * align-icon toolbar absolutely positioned slightly *outside* its own
+ * edges by design while editing (see tiptap-extension-resize-image's
+ * ImageNodeView), and `overflow: hidden` would clip them.
+ */
+.tiptap div:has(> img) > img {
+  display: block;
+  border-radius: 0.5rem;
+}
