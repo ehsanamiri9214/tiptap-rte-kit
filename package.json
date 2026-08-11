@@ -3,6 +3,15 @@
   "version": "0.1.0",
   "description": "A batteries-included Tiptap rich text editor + read-only renderer + toolbar, built on @heroui/react. Extracted from Bridgeto so it can be reused across projects.",
   "license": "MIT",
+  "author": "Ehsan Amiri",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ehsanamiri9214/tiptap-rte-kit.git"
+  },
+  "homepage": "https://github.com/ehsanamiri9214/tiptap-rte-kit#readme",
+  "bugs": {
+    "url": "https://github.com/ehsanamiri9214/tiptap-rte-kit/issues"
+  },
   "type": "module",
   "sideEffects": [
     "**/*.css"
