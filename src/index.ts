@@ -25,5 +25,12 @@ export type { MenuBarState } from "./hooks/menu-bar-state";
 export { EditorUrlType } from "./enums/editor-url.enum";
 
 // Re-exported so consumers can type editor content without depending on
-// @tiptap/react directly for just this one type.
-export type { Content as TEditorContent } from "@tiptap/react";
+// @tiptap/react directly for just these two types. `TEditorContent`
+// (Tiptap's `Content`) is the broad type `Editor`'s `initialData` (and
+// `ReadOnlyHtml`'s `content`) accept — HTML string, JSON, or null.
+// `TEditorJSON` (Tiptap's `JSONContent`) is narrower and matches exactly
+// what `Editor`'s `onChange` actually hands you (`editor.getJSON()`,
+// which is never null) — type your own state with this one, not
+// `TEditorContent`, or you'll end up fighting an impossible `null` case
+// that can't actually happen.
+export type { Content as TEditorContent, JSONContent as TEditorJSON } from "@tiptap/react";

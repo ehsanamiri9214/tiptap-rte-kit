@@ -1,12 +1,13 @@
 import { getEditorExtensions, IGetEditorExtensionsOptions } from "../utils/editor-extensions";
 import MenuBar from "./MenuBar";
-import { Content, EditorContent, useEditor } from "@tiptap/react";
+import { Content, EditorContent, JSONContent, useEditor } from "@tiptap/react";
 import { useEffect } from "react";
 
 export interface IEditorProps {
   initialData?: Content;
   editable?: boolean;
-  onChange?: (data: Content) => void;
+  /** Called with `editor.getJSON()` on every change — never `null`, despite `initialData` (and `setContent`) accepting the broader `Content` type. Feed this straight into `ReadOnlyHtml`'s `content` prop. */
+  onChange?: (data: JSONContent) => void;
   className?: string;
   editorClassName?: string;
   menuBarClassName?: string;
