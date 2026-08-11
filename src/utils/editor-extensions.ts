@@ -33,28 +33,18 @@ export interface IGetEditorExtensionsOptions {
  */
 export const getEditorExtensions = (options: IGetEditorExtensionsOptions = {}): Extensions => {
   const extensions: Extensions = [
-    StarterKit.configure({
-      bulletList: {
-        HTMLAttributes: {
-          class: "list-disc ml-6",
-        },
-      },
-      orderedList: {
-        HTMLAttributes: {
-          class: "list-decimal ml-6",
-        },
-      },
-      link: {
-        HTMLAttributes: {
-          class: "text-blue-600 hover:underline",
-        },
-      },
-      horizontalRule: {
-        HTMLAttributes: {
-          class: "my-4 border-t-1 border-gray-300 dark:border-gray-700",
-        },
-      },
-    }),
+    // No Tailwind utility classes on any of these HTMLAttributes —
+    // Tailwind only generates CSS for class *names it can find by
+    // scanning a project's own source files*, never a dependency's
+    // compiled JS. A class string baked in here would silently render
+    // with no matching CSS in any consuming app, unless that app's own
+    // source happens to already use the exact same class somewhere else
+    // (which is exactly what made this bug take a while to notice —
+    // most of these classes are common enough to be reused
+    // coincidentally, `text-blue-600` for links wasn't). All of this
+    // styling lives in ./styles/editor.css instead, as real CSS scoped
+    // under `.tiptap` — see that file for each corresponding rule.
+    StarterKit,
     Highlight,
     TextAlign.configure({
       types: ["heading", "paragraph"],
@@ -62,9 +52,6 @@ export const getEditorExtensions = (options: IGetEditorExtensionsOptions = {}): 
     Superscript,
     Subscript,
     Link.configure({
-      HTMLAttributes: {
-        class: "text-blue-600 hover:underline",
-      },
       // Both Editor and ReadOnlyHtml intercept clicks manually instead
       // (internal routing vs. external new-tab) — see their `onClick`.
       openOnClick: false,
@@ -77,7 +64,12 @@ export const getEditorExtensions = (options: IGetEditorExtensionsOptions = {}): 
     Image,
     ImageResize,
     Dropcursor.configure({
-      color: "text-blue-500",
+      // A real CSS color, not a Tailwind class — this is assigned
+      // directly to a DOM element's `style.backgroundColor` by
+      // prosemirror-dropcursor itself, so (unlike the HTMLAttributes
+      // above) a Tailwind class name here wouldn't just be unstyled,
+      // it'd be flat-out invalid CSS and silently do nothing at all.
+      color: "#3b82f6", // Tailwind blue-500
       width: 2,
     }),
   ];
@@ -87,9 +79,6 @@ export const getEditorExtensions = (options: IGetEditorExtensionsOptions = {}): 
       Youtube.configure({
         controls: true,
         nocookie: true,
-        HTMLAttributes: {
-          class: "w-full aspect-video rounded-lg my-4",
-        },
         ...(options.youtube || {}),
       }),
     );
